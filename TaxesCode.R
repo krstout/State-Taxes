@@ -13,6 +13,7 @@ library(PtProcess)
 library(gtable)
 library(gridExtra)
 library(googleVis)
+library(maps)
 
 setwd("C://Users//Sheryl//Documents//PSC 631 Adv. Stats//State Taxes")
 
@@ -323,6 +324,8 @@ prob.rep.taxtotal.dec <- rep.prob(taxtotal.d)
 # Y-Axis for plot
 y.axis <- c("Sales Tax", "Income Tax", "Coporate Tax", "Tobacco Tax", "Gas Tax", "Others", 
                "Fees", "Total Taxes")
+y.axis <- factor(y.axis, levels(y.axis)[c("Corporate Tax", "Income Tax", "Sales Tax", "Others",
+                                          "Gas Tax", "Tobacco Tax", "Fees", "Total Taxes")])
 
 # Democratic Tax Increases
 prob.dem.inc <- rbind(prob.dem.sales.inc, prob.dem.inctax.inc, prob.dem.corp.inc, prob.dem.cigtob.inc,
@@ -532,13 +535,14 @@ fd.table.d <- data.frame(cbind(fd.table.d, fd.ci.lower.d, fd.ci.upper.d))
 fd.table.d$fd.table.d <- as.numeric(as.character(fd.table.d$fd.table.d))
 fd.table.d$fd.ci.lower.d <- as.numeric(as.character(fd.table.d$fd.ci.lower.d))
 fd.table.d$fd.ci.upper.d <- as.numeric(as.character(fd.table.d$fd.ci.upper.d))
+fd.table.d
 
 
 ### Change Over Time
 
-plot(ranef(taxtotal.i)[["JoinYear"]][,1], type = "l")
+#plot(ranef(taxtotal.i)[["JoinYear"]][,1], type = "l")
 
-time.sales.i <- ranef(sales.i)[["JoinYear"]][,1]
+#time.sales.i <- ranef(sales.i)[["JoinYear"]][,1]
 
 years <- c(1989:2008, 2010:2012)
 
@@ -595,10 +599,60 @@ fees.graph <- over.time(fees.i, fees.d, "Fees")
 taxtotal.graph <- over.time(taxtotal.i, taxtotal.d, "Total Taxes")
 
 
-time.sales.i <- re.time(sales.i)
-plot(years, time.sales.i, type = "l")
-time.sales.d <- re.time(sales.d)
-plot(years, time.sales.d, type = "l")
+
+### Maps of State Random Effects
+
+state.eff <- function(type.i, type.d) {
+  # Increase
+  sre.i <- ranef(type.i)[["JoinState"]][,1]
+
+  # Decrease
+  sre.d <- ranef(type.d)[["JoinState"]][,1]
+  
+  # Data organization
+  region <- data.frame(tolower(state.name))
+  all.states <- map_data("state")
+  state.data <- data.frame(cbind(region, sre.i, sre.d))
+  state.data <- rename(state.data, c(tolower.state.name. = "region"))
+  state.data <- join(state.data, all.states, by = "region", match = "first")
+  
+  # Plot on Map
+  map.i <- ggplot() + geom_map(data = state.data, aes(map_id = region, fill = sre.i), map = all.states) +
+    geom_path(data = all.states, aes(x = long, y = lat, group = group)) +
+    coord_fixed() + theme_bw() + 
+    theme(axis.ticks = element_blank(),
+          axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          panel.grid.minor=element_blank(),
+          panel.grid.major=element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.border = element_blank())
+  map.d <- ggplot() + geom_map(data = state.data, aes(map_id = region, fill = sre.d), map = all.states) +
+    geom_path(data = all.states, aes(x = long, y = lat, group = group)) +                               
+    coord_fixed() + theme_bw() +
+    theme(axis.ticks = element_blank(),
+          axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          panel.grid.minor=element_blank(),
+          panel.grid.major=element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.border = element_blank())
+  map.a <- ggplot_gtable(ggplot_build(map.i))
+  map.b <- ggplot_gtable(ggplot_build(map.d))
+  
+  twomap <- grid.arrange(map.a, map.b, nrow = 2)
+}  
+
+map.sales <- state.eff(sales.i, sales.d)
+map.inctax <- state.eff(inctax.i, inctax.d)
+map.corp <- state.eff(corp.i, corp.d)
+map.cigtob <- state.eff(cigtob.i, cigtob.d)
+map.motofuel <- state.eff(motofuel.i, motofuel.d)
+map.others <- state.eff(others.i, others.d)
+map.fees <- state.eff(fees.i, fees.d)
+map.taxtotal <- state.eff(taxtotal.i, taxtotal.d)
 
 ### FIGURE 1: Plot of Predicted Probabilities
 #############################################
