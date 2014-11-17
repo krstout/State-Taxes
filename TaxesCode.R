@@ -14,6 +14,7 @@ library(gtable)
 library(gridExtra)
 library(googleVis)
 library(maps)
+library(RColorBrewer)
 
 setwd("C://Users//Sheryl//Documents//PSC 631 Adv. Stats//State Taxes")
 
@@ -324,8 +325,9 @@ prob.rep.taxtotal.dec <- rep.prob(taxtotal.d)
 # Y-Axis for plot
 y.axis <- c("Sales Tax", "Income Tax", "Coporate Tax", "Tobacco Tax", "Gas Tax", "Others", 
                "Fees", "Total Taxes")
-y.axis <- factor(y.axis, levels(y.axis)[c("Corporate Tax", "Income Tax", "Sales Tax", "Others",
-                                          "Gas Tax", "Tobacco Tax", "Fees", "Total Taxes")])
+better.levels <- c("Coporate Tax", "Income Tax", "Sales Tax", "Others", "Gas Tax", "Tobacco Tax",
+                   "Fees", "Total Taxes")
+
 
 # Democratic Tax Increases
 prob.dem.inc <- rbind(prob.dem.sales.inc, prob.dem.inctax.inc, prob.dem.corp.inc, prob.dem.cigtob.inc,
@@ -358,7 +360,6 @@ prob.rep.dec <- cbind(y.axis, prob.rep.dec)
 prob.rep.dec <- data.frame(prob.rep.dec)
 prob.rep.dec <- rename(prob.rep.dec, c("X.Intercept." = "r.Probability"))
 prob.rep.dec$r.Probability <- as.numeric(as.character(prob.rep.dec$r.Probability))
-
 
 ### Risk Ratio
 
@@ -602,7 +603,7 @@ taxtotal.graph <- over.time(taxtotal.i, taxtotal.d, "Total Taxes")
 
 ### Maps of State Random Effects
 
-state.eff <- function(type.i, type.d) {
+state.eff <- function(type.i, type.d, title) {
   # Increase
   sre.i <- ranef(type.i)[["JoinState"]][,1]
 
@@ -619,7 +620,7 @@ state.eff <- function(type.i, type.d) {
   # Plot on Map
   map.i <- ggplot() + geom_map(data = state.data, aes(map_id = region, fill = sre.i), map = all.states) +
     geom_path(data = all.states, aes(x = long, y = lat, group = group)) +
-    coord_fixed() + theme_bw() + 
+    coord_fixed() + theme_bw() + scale_fill_gradientn(colours = brewer.pal(5, "Oranges"), name = "Increase") +
     theme(axis.ticks = element_blank(),
           axis.text.x = element_blank(),
           axis.text.y = element_blank(),
@@ -630,7 +631,7 @@ state.eff <- function(type.i, type.d) {
           panel.border = element_blank())
   map.d <- ggplot() + geom_map(data = state.data, aes(map_id = region, fill = sre.d), map = all.states) +
     geom_path(data = all.states, aes(x = long, y = lat, group = group)) +                               
-    coord_fixed() + theme_bw() +
+    coord_fixed() + theme_bw() + scale_fill_gradientn(colours = brewer.pal(5, "Purples"), name = "Decrease") +
     theme(axis.ticks = element_blank(),
           axis.text.x = element_blank(),
           axis.text.y = element_blank(),
@@ -642,17 +643,17 @@ state.eff <- function(type.i, type.d) {
   map.a <- ggplot_gtable(ggplot_build(map.i))
   map.b <- ggplot_gtable(ggplot_build(map.d))
   
-  twomap <- grid.arrange(map.a, map.b, nrow = 2)
+  twomap <- grid.arrange(map.a, map.b, nrow = 2, main = title)
 }  
 
-map.sales <- state.eff(sales.i, sales.d)
-map.inctax <- state.eff(inctax.i, inctax.d)
-map.corp <- state.eff(corp.i, corp.d)
-map.cigtob <- state.eff(cigtob.i, cigtob.d)
-map.motofuel <- state.eff(motofuel.i, motofuel.d)
-map.others <- state.eff(others.i, others.d)
-map.fees <- state.eff(fees.i, fees.d)
-map.taxtotal <- state.eff(taxtotal.i, taxtotal.d)
+map.sales <- state.eff(sales.i, sales.d, "State Effects for Sales Tax")
+map.inctax <- state.eff(inctax.i, inctax.d, "State Effects for Income Tax")
+map.corp <- state.eff(corp.i, corp.d, "State Effects for Corporate Tax")
+map.cigtob <- state.eff(cigtob.i, cigtob.d, "State Effects for Tobacco Tax")
+map.motofuel <- state.eff(motofuel.i, motofuel.d, "State Effects for Gas Tax")
+map.others <- state.eff(others.i, others.d, "State Effects for Other Taxes")
+map.fees <- state.eff(fees.i, fees.d, "State Effects for Fees")
+map.taxtotal <- state.eff(taxtotal.i, taxtotal.d, "State Effects for Total Taxes")
 
 ### FIGURE 1: Plot of Predicted Probabilities
 #############################################
