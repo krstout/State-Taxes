@@ -1,8 +1,11 @@
+### File for combining data
+
 rm(list = ls())
 
 library(plyr)
 
-setwd("C://Users//Sheryl//Documents//PSC 631 Adv. Stats//State Taxes")
+### Set your working directory
+#setwd("C://Users//Sheryl//Documents//PSC 631 Adv. Stats//State Taxes")
 
 boda <- read.csv("BODAcious.9.6.14.csv")
 govelecs <- read.csv("StateElections_Gub_2012_09_06_Public_Version.csv")
