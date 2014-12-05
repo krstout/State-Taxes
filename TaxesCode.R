@@ -5,20 +5,20 @@
 
 rm(list = ls())
 
-install.packages("descr")
-install.packages("lme4")
-install.packages("plyr")
-install.packages("ggplot2")
-install.packages("party")
-install.packages("caret")
-install.packages("arm")
-install.packages("blme")
-install.packages("PtProcess")
-install.packages("gtable")
-install.packages("gridExtra")
-install.packages("googleVis")
-install.packages("maps")
-install.packages("RColorBrewer")
+#install.packages("descr")
+#install.packages("lme4")
+#install.packages("plyr")
+#install.packages("ggplot2")
+#install.packages("party")
+#install.packages("caret")
+#install.packages("arm")
+#install.packages("blme")
+#install.packages("PtProcess")
+#install.packages("gtable")
+#install.packages("gridExtra")
+#install.packages("googleVis")
+#install.packages("maps")
+#install.packages("RColorBrewer")
 
 library(descr)
 library(lme4)
@@ -280,11 +280,6 @@ fees.d <- bglmer(fees_decrease ~ govparty_c + (1 | JoinState) + (1 | JoinYear),
                  family = binomial, data = data)
 
 
-
-# govparty_c:
-# R = 0
-# D = 1
-
 ### Predicted Probabilities
 
 dem.prob <- function(x) {
@@ -354,11 +349,10 @@ prob.dem.taxtotal.dec <- dem.prob(taxtotal.d)
 prob.rep.taxtotal.dec <- rep.prob(taxtotal.d)
 
 # Y-Axis for plot
-y.axis <- c("Sales Tax", "Income Tax", "Coporate Tax", "Tobacco Tax", "Gas Tax", "Alcohol Tax", 
+y.axis <- c("Sales Tax", "Income Tax", "Corporate Tax", "Tobacco Tax", "Gas Tax", "Alcohol Tax", 
             "Others", "Fees", "Total Taxes")
-better.levels <- c("Coporate Tax", "Income Tax", "Sales Tax", "Others", "Gas Tax", "Tobacco Tax",
-                   "Fees", "Total Taxes")
-
+better.levels <- c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", "Gas Tax", "Others",
+                   "Sales Tax", "Income Tax", "Corporate Tax")
 
 # Democratic Tax Increases
 prob.dem.inc <- rbind(prob.dem.sales.inc, prob.dem.inctax.inc, prob.dem.corp.inc, prob.dem.cigtob.inc,
@@ -368,6 +362,9 @@ prob.dem.inc <- cbind(y.axis, prob.dem.inc)
 prob.dem.inc <- data.frame(prob.dem.inc)
 prob.dem.inc <- rename(prob.dem.inc, c("X.Intercept." = "Probability"))
 prob.dem.inc$Probability <- as.numeric(as.character(prob.dem.inc$Probability))
+prob.dem.inc$y.axis <- factor(prob.dem.inc$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                     "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                     "Corporate Tax"))
 
 # Republican Tax Increases
 prob.rep.inc <- rbind(prob.rep.sales.inc, prob.rep.inctax.inc, prob.rep.corp.inc, prob.rep.cigtob.inc, 
@@ -377,6 +374,9 @@ prob.rep.inc <- cbind(y.axis, prob.rep.inc)
 prob.rep.inc <- data.frame(prob.rep.inc)
 prob.rep.inc <- rename(prob.rep.inc, c("X.Intercept." = "r.Probability"))
 prob.rep.inc$r.Probability <- as.numeric(as.character(prob.rep.inc$r.Probability))
+prob.rep.inc$y.axis <- factor(prob.rep.inc$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                     "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                     "Corporate Tax"))
 
 # Democratic Tax Decreases
 prob.dem.dec <- rbind(prob.dem.sales.dec, prob.dem.inctax.dec, prob.dem.corp.dec, prob.dem.cigtob.dec, 
@@ -386,6 +386,9 @@ prob.dem.dec <- cbind(y.axis, prob.dem.dec)
 prob.dem.dec <- data.frame(prob.dem.dec)
 prob.dem.dec <- rename(prob.dem.dec, c("X.Intercept." = "Probability"))
 prob.dem.dec$Probability <- as.numeric(as.character(prob.dem.dec$Probability))
+prob.dem.dec$y.axis <- factor(prob.dem.dec$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                     "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                     "Corporate Tax"))
 
 # Republican Tax Decreases
 prob.rep.dec <- rbind(prob.rep.sales.dec, prob.rep.inctax.dec, prob.rep.corp.dec, prob.rep.cigtob.dec, 
@@ -395,6 +398,9 @@ prob.rep.dec <- cbind(y.axis, prob.rep.dec)
 prob.rep.dec <- data.frame(prob.rep.dec)
 prob.rep.dec <- rename(prob.rep.dec, c("X.Intercept." = "r.Probability"))
 prob.rep.dec$r.Probability <- as.numeric(as.character(prob.rep.dec$r.Probability))
+prob.rep.dec$y.axis <- factor(prob.rep.dec$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                     "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                     "Corporate Tax"))
 
 ### Risk Ratio
 
@@ -464,6 +470,9 @@ rr.table.i <- data.frame(cbind(rr.table.i, ci.lower.i, ci.upper.i))
 rr.table.i$rr.table.i <- as.numeric(as.character(rr.table.i$rr.table.i))
 rr.table.i$ci.lower.i <- as.numeric(as.character(rr.table.i$ci.lower.i))
 rr.table.i$ci.upper.i <- as.numeric(as.character(rr.table.i$ci.upper.i))
+rr.table.i$y.axis <- factor(rr.table.i$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                 "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                 "Corporate Tax"))
 
 # Risk Ratio for Decrease
 
@@ -488,7 +497,9 @@ rr.table.d <- data.frame(cbind(rr.table.d, ci.lower.d, ci.upper.d))
 rr.table.d$rr.table.d <- as.numeric(as.character(rr.table.d$rr.table.d))
 rr.table.d$ci.lower.d <- as.numeric(as.character(rr.table.d$ci.lower.d))
 rr.table.d$ci.upper.d <- as.numeric(as.character(rr.table.d$ci.upper.d))
-
+rr.table.d$y.axis <- factor(rr.table.d$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                 "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                 "Corporate Tax"))
 
 ### First Difference
 
@@ -555,6 +566,9 @@ fd.table.i <- data.frame(cbind(fd.table.i, fd.ci.lower.i, fd.ci.upper.i))
 fd.table.i$fd.table.i <- as.numeric(as.character(fd.table.i$fd.table.i))
 fd.table.i$fd.ci.lower.i <- as.numeric(as.character(fd.table.i$fd.ci.lower.i))
 fd.table.i$fd.ci.upper.i <- as.numeric(as.character(fd.table.i$fd.ci.upper.i))
+fd.table.i$y.axis <- factor(fd.table.i$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                 "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                 "Corporate Tax"))
 
 # First Difference for Decrease
 
@@ -579,7 +593,10 @@ fd.table.d <- data.frame(cbind(fd.table.d, fd.ci.lower.d, fd.ci.upper.d))
 fd.table.d$fd.table.d <- as.numeric(as.character(fd.table.d$fd.table.d))
 fd.table.d$fd.ci.lower.d <- as.numeric(as.character(fd.table.d$fd.ci.lower.d))
 fd.table.d$fd.ci.upper.d <- as.numeric(as.character(fd.table.d$fd.ci.upper.d))
-fd.table.d
+fd.table.d$y.axis <- factor(fd.table.d$y.axis, c("Total Taxes", "Fees", "Tobacco Tax", "Alcohol Tax", 
+                                                 "Gas Tax", "Others", "Sales Tax", "Income Tax", 
+                                                 "Corporate Tax"))
+
 
 
 ### THE VISUSALS ###
@@ -617,7 +634,7 @@ gplot.b <- ggplot_gtable(ggplot_build(plot.b))
 
 figure1 <- grid.arrange(gplot.a, gplot.b, ncol = 2)
 
-png(filename = "Figure1.png")
+png(filename = "Figure1.png", width = 600, height = 350)
 figure1 <- grid.arrange(gplot.a, gplot.b, ncol = 2)
 dev.off()
 
@@ -631,7 +648,7 @@ plot.rr.i <- ggplot() + coord_flip() + geom_point(data = rr.table.i, aes(y.axis,
   geom_errorbar(data = rr.table.i, aes(y.axis, ymin = ci.lower.i, ymax = ci.upper.i),
                 width = 0, size = 1) + geom_hline(yintercept = 1, linetype = "dashed") +
   theme_classic() + ggtitle("Tax Increase") + ylab("Risk Ratio") + xlab("Tax Type") +
-  scale_y_continuous(limit = c(0, 2), breaks = seq(0, 2, .25))
+  scale_y_continuous(limit = c(0, 2), breaks = seq(0, 2, .5))
 
 plot.rr.i
 
@@ -641,7 +658,7 @@ plot.rr.d <- ggplot() + coord_flip() + geom_point(data = rr.table.d, aes(y.axis,
   geom_errorbar(data = rr.table.d, aes(y.axis, ymin = ci.lower.d, ymax = ci.upper.d),
                 width = 0, size = 1) + geom_hline(yintercept = 1, linetype = "dashed") +
   theme_classic() + ggtitle("Tax Decrease") + ylab("Risk Ratio") + xlab("Tax Type") +
-  scale_y_continuous(limit = c(0, 2), breaks = seq(0, 2, .25))
+  scale_y_continuous(limit = c(0, 2), breaks = seq(0, 2, .5))
 
 plot.rr.d
 
@@ -650,7 +667,7 @@ gplot.rr.d <- ggplot_gtable(ggplot_build(plot.rr.d))
 
 figure2 <- grid.arrange(gplot.rr.i, gplot.rr.d, ncol = 2)
 
-png("Figure2.png")
+png("Figure2.png", width = 600, height = 350)
 figure2 <- grid.arrange(gplot.rr.i, gplot.rr.d, ncol = 2)
 dev.off()
 
@@ -681,7 +698,7 @@ gplot.fd.d <- ggplot_gtable(ggplot_build(plot.fd.d))
 
 figure3 <- grid.arrange(gplot.fd.i, gplot.fd.d, ncol = 2)
 
-png("Figure3.png")
+png("Figure3.png", width = 600, height = 350)
 figure3 <- grid.arrange(gplot.fd.i, gplot.fd.d, ncol = 2)
 dev.off()
 
@@ -727,10 +744,12 @@ over.time <- function(type.i, type.d, taxtype) {
     ylab(taxtype) + xlab("Years") + theme_classic()
   
   # Get Graphs Side by Side
-  gplot.a <- ggplot_gtable(ggplot_build(inc.plot))
-  gplot.b <- ggplot_gtable(ggplot_build(dec.plot))
+  #gplot.a <- ggplot_gtable(ggplot_build(inc.plot))
+  #gplot.b <- ggplot_gtable(ggplot_build(dec.plot))
   
-  figure <- grid.arrange(gplot.a, gplot.b, ncol = 2)
+  #figure <- grid.arrange(gplot.a, gplot.b, ncol = 2)
+  
+  figure <- multiplot(inc.plot, dec.plot, cols = 2)
   return(figure)
 }
 
@@ -748,7 +767,145 @@ fees.graph <- over.time(fees.i, fees.d, "Fees")
 taxtotal.graph <- over.time(taxtotal.i, taxtotal.d, "Total Taxes")
 
 
-### FIGURE 5 ###
+### Figure 5 - Time Effects vs. National GDP
+############################################
+
+time.data <- function(type.i, type.d) {
+  # Increase
+  re.i <- ranef(type.i)[["JoinYear"]][,1]
+  intercept.i <- fixef(type.i)[1]
+  dem.i <- fixef(type.i)[2]
+  republican.i <- plogis(intercept.i + re.i)
+  democrat.i <- plogis(intercept.i + dem.i + re.i)
+  # Decrease
+  re.d <- ranef(type.d)[["JoinYear"]][,1]
+  intercept.d <- fixef(type.d)[1]
+  dem.d <- fixef(type.d)[2]
+  republican.d <- plogis(intercept.d + re.d)
+  democrat.d <- plogis(intercept.d + dem.d + re.d)
+  # Graph Data
+  Year <- c(1989:2008, 2010:2012)
+  time.data <- data.frame(cbind(Year, republican.i, democrat.i, republican.d, democrat.d))
+  return(time.data)
+}
+
+totaltax.data <- time.data(taxtotal.i, taxtotal.d)
+GDP <- read.csv("Annual GDP Growth.csv")
+totaltax.data <- merge(totaltax.data, GDP, by = "Year")
+
+GDPvtaxtotal.i <- ggplot() + geom_line(data = totaltax.data, aes(x = Year, y = republican.i), color = "red", size = 1) +
+  geom_line(data = totaltax.data, aes(x = Year, y = democrat.i), color = "blue", size = 1) + 
+  geom_line(data = totaltax.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Increase in Total Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvtaxtotal.i
+
+GDPvtaxtotal.d <- ggplot() + geom_line(data = totaltax.data, aes(x = Year, y = republican.d), color = "red", size = 1) +
+  geom_line(data = totaltax.data, aes(x = Year, y = democrat.d), color = "blue", size = 1) + 
+  geom_line(data = totaltax.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Decrease in Total Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvtaxtotal.d
+
+corporate.data <- time.data(corp.i, corp.d)
+corporate.data <- merge(corporate.data, GDP, by = "Year")
+
+GDPvcorporate.i <- ggplot() + geom_line(data = corporate.data, aes(x = Year, y = republican.i), color = "red", size = 1) +
+  geom_line(data = corporate.data, aes(x = Year, y = democrat.i), color = "blue", size = 1) + 
+  geom_line(data = corporate.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Increase in Corporate Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvcorporate.i
+
+GDPvcorporate.d <- ggplot() + geom_line(data = corporate.data, aes(x = Year, y = republican.d), color = "red", size = 1) +
+  geom_line(data = corporate.data, aes(x = Year, y = democrat.d), color = "blue", size = 1) + 
+  geom_line(data = corporate.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Decrease in Corporate Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvcorporate.d
+
+income.data <- time.data(inctax.i, inctax.d)
+income.data <- merge(income.data, GDP, by = "Year")
+
+GDPvincome.i <- ggplot() + geom_line(data = income.data, aes(x = Year, y = republican.i), color = "red", size = 1) +
+  geom_line(data = income.data, aes(x = Year, y = democrat.i), color = "blue", size = 1) + 
+  geom_line(data = income.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Increase in Income Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvincome.i
+
+GDPvincome.d <- ggplot() + geom_line(data = income.data, aes(x = Year, y = republican.d), color = "red", size = 1) +
+  geom_line(data = income.data, aes(x = Year, y = democrat.d), color = "blue", size = 1) + 
+  geom_line(data = income.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Decrease in Income Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvincome.d
+
+sales.data <- time.data(sales.i, sales.d)
+sales.data <- merge(sales.data, GDP, by = "Year")
+
+GDPvsales.i <- ggplot() + geom_line(data = sales.data, aes(x = Year, y = republican.i), color = "red", size = 1) +
+  geom_line(data = sales.data, aes(x = Year, y = democrat.i), color = "blue", size = 1) + 
+  geom_line(data = sales.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Increase in Sales Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvsales.i
+
+GDPvsales.d <- ggplot() + geom_line(data = sales.data, aes(x = Year, y = republican.d), color = "red", size = 1) +
+  geom_line(data = sales.data, aes(x = Year, y = democrat.d), color = "blue", size = 1) + 
+  geom_line(data = sales.data, aes(x = Year, y = Growth/10), color = "black", size = 1.1) +
+  ggtitle("Decrease in Sales Taxes vs. GDP") + ylab("Probability and GDP Growth/10") + xlab("Year") + 
+  theme_classic() + coord_cartesian(ylim = c(-.1, 1))
+GDPvsales.d
+
+### Code for a handy function from cookbook-r.com ###
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+figure5 <- multiplot(GDPvtaxtotal.i, GDPvtaxtotal.d, GDPvcorporate.i, GDPvcorporate.d,
+                        GDPvincome.i, GDPvincome.d, GDPvsales.i, GDPvsales.d, 
+                     layout = matrix(c(1, 2, 3, 4, 5, 6, 7, 8), nrow = 4, byrow = TRUE))
+
+png("Figure5.png", width = 600, height = 830)
+figure5 <- multiplot(GDPvtaxtotal.i, GDPvtaxtotal.d, GDPvcorporate.i, GDPvcorporate.d,
+                     GDPvincome.i, GDPvincome.d, GDPvsales.i, GDPvsales.d, 
+                     layout = matrix(c(1, 2, 3, 4, 5, 6, 7, 8), nrow = 4, byrow = TRUE))
+dev.off()
+
+### FIGURE 6 ###
 ### Maps of State Random Effects
 
 state.eff <- function(type.i, type.d, title) {
@@ -794,7 +951,7 @@ state.eff <- function(type.i, type.d, title) {
   twomap <- grid.arrange(map.a, map.b, nrow = 2, main = title)
 }  
 
-### Figure 5 maps ###
+### Figure 6 maps ###
 ### Again, this is the only way I can get them to show for now
 
 map.sales <- state.eff(sales.i, sales.d, "State Effects for Sales Tax")
