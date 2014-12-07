@@ -747,9 +747,7 @@ over.time <- function(type.i, type.d, taxtype) {
   #gplot.a <- ggplot_gtable(ggplot_build(inc.plot))
   #gplot.b <- ggplot_gtable(ggplot_build(dec.plot))
   
-  #figure <- grid.arrange(gplot.a, gplot.b, ncol = 2)
-  
-  figure <- multiplot(inc.plot, dec.plot, cols = 2)
+  figure <- grid.arrange(gplot.a, gplot.b, ncol = 2)
   return(figure)
 }
 
@@ -954,15 +952,15 @@ state.eff <- function(type.i, type.d, title) {
 ### Figure 6 maps ###
 ### Again, this is the only way I can get them to show for now
 
-map.sales <- state.eff(sales.i, sales.d, "State Effects for Sales Tax")
-map.inctax <- state.eff(inctax.i, inctax.d, "State Effects for Income Tax")
-map.corp <- state.eff(corp.i, corp.d, "State Effects for Corporate Tax")
-map.cigtob <- state.eff(cigtob.i, cigtob.d, "State Effects for Tobacco Tax")
-map.motofuel <- state.eff(motofuel.i, motofuel.d, "State Effects for Gas Tax")
-map.alc <- state.eff(alc.i, alc.d, "State Effects for Alcohol Tax")
-map.others <- state.eff(others.i, others.d, "State Effects for Other Taxes")
-map.fees <- state.eff(fees.i, fees.d, "State Effects for Fees")
-map.taxtotal <- state.eff(taxtotal.i, taxtotal.d, "State Effects for Total Taxes")
+map.sales <- state.eff(sales.i, sales.d, "Sales Tax")
+map.inctax <- state.eff(inctax.i, inctax.d, "Income Tax")
+map.corp <- state.eff(corp.i, corp.d, "Corporate Tax")
+map.cigtob <- state.eff(cigtob.i, cigtob.d, "Tobacco Tax")
+map.motofuel <- state.eff(motofuel.i, motofuel.d, "Gas Tax")
+map.alc <- state.eff(alc.i, alc.d, "Alcohol Tax")
+map.others <- state.eff(others.i, others.d, "Other Taxes")
+map.fees <- state.eff(fees.i, fees.d, "Fees")
+map.taxtotal <- state.eff(taxtotal.i, taxtotal.d, "Total Taxes")
 
 
 
